@@ -76,7 +76,6 @@ public class Miner extends Script implements Painting{
 	private static final int[] ANIMATIONS = {624,625,628};
 	public Image HUD;
 	public int InventoryCount;
-	public int[] Ores;
 	public boolean SelectMode = false;
 	public long PathPaintTimeout = 0;
 	public RSTile[] WalkPath;
@@ -147,7 +146,7 @@ public class Miner extends Script implements Painting{
 					
 				}
 				
-				if(gui.getList_Ores().getSelectedItem() != null && gui.getList_Ores().getSelectedItem().length() > 0){
+				if(gui != null && gui.getList_Ores().getSelectedItem() != null && gui.getList_Ores().getSelectedItem().length() > 0){
 
 					RSObject[] Objs1 = Objects.find(30, Integer.valueOf(gui.getList_Ores().getSelectedItem()));
 					
@@ -277,19 +276,19 @@ public class Miner extends Script implements Painting{
 					
 				}
 				
-				if(!Inventory.isFull() && PathFinding.distanceTo(StartTile, false) < 30 && !isMining()){
-					
-					Mine();
-					
-				}
-				
-				if(method == MiningMethod.M1D1 && Inventory.getCount(Ores) > 0){
+				if(method == MiningMethod.M1D1 && Inventory.getCount(OreNames) > 0 && Player.getAnimation() == -1){
 					
 					state = ScriptState.DROPING;
 					Drop();
 					
 				}
-				
+
+				if(!Inventory.isFull() && PathFinding.distanceTo(StartTile, false) < 30 && !isMining()){
+					
+					Mine();
+					
+				}
+
 				if(Inventory.getCount(PICKAXE_HANDLE) > 0){
 					
 					findPickaxeHead();
