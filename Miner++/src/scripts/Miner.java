@@ -371,10 +371,10 @@ public class Miner extends Script implements Painting{
 					break;
 				}
 				
-				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition());
+				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition()) - General.random(-30, 30);
 				org.tribot.api2007.Camera.setCameraRotation(Angle);
 				
-				if(Rocks[0].isOnScreen()){
+				if(Rocks[0].isOnScreen() && Rocks[0].getModel().getVertexCount() < 150){
 					
 					if(DynamicClicking.clickRSModel(Rocks[0].getModel(), "Mine")){
 						
@@ -405,7 +405,7 @@ public class Miner extends Script implements Painting{
 
 						sleep(100, 300);
 						
-						if(DynamicClicking.clickRSModel(Rocks[0].getModel(), "Mine")){
+						if(Rocks[0].getModel().getVertexCount() < 150 && DynamicClicking.clickRSModel(Rocks[0].getModel(), "Mine")){
 							
 							CurrentlyMining = Rocks[0];
 							MineNext = Rocks[1];
@@ -454,10 +454,10 @@ public class Miner extends Script implements Painting{
 					break;
 				}
 				
-				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition());
+				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition()) - General.random(-30, 30);
 				org.tribot.api2007.Camera.setCameraRotation(Angle);
 				
-				if(Rocks[1].isOnScreen()){
+				if(Rocks[1].isOnScreen() && Rocks[1].getModel().getVertexCount() < 150){
 					
 					if(DynamicClicking.clickRSModel(Rocks[1].getModel(), "Mine")){
 						
@@ -488,7 +488,7 @@ public class Miner extends Script implements Painting{
 						
 						sleep(100, 300);
 						
-						if(DynamicClicking.clickRSModel(Rocks[1].getModel(), "Mine")){
+						if(Rocks[1].getModel().getVertexCount() < 150 && DynamicClicking.clickRSModel(Rocks[1].getModel(), "Mine")){
 							
 							CurrentlyMining = Rocks[1];
 							MineNext = Rocks[0];
@@ -534,6 +534,7 @@ public class Miner extends Script implements Painting{
 	private void Drop() {
 
 		Inventory.dropAllExcept(PICKAXES);
+		InventoryCount = 0;
 		
 	}
 

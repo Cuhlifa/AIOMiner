@@ -81,8 +81,6 @@ public class GUI {
 	 */
 	private void initialize() {
 		frmMiner = new JFrame();
-		frmMiner.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource("FavIcon.png")));
 		frmMiner.setTitle("Miner++");
 		frmMiner.setResizable(false);
 		frmMiner.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
