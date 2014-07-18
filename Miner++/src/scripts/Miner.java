@@ -296,7 +296,6 @@ public class Miner extends Script implements Painting{
 				}
 				
 				int InvCount = Inventory.getCount(OreNames);
-
 				if(InvCount > InventoryCount){
 
 					MinedOres += InvCount - InventoryCount;
