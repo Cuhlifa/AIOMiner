@@ -369,15 +369,15 @@ public class Miner extends Script implements Painting{
 					break;
 				}
 				
-				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition()) - General.random(-30, 30);
-				org.tribot.api2007.Camera.setCameraRotation(Angle);
+				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0].getPosition()) - General.random(-70, 70);
+				if(General.random(0, 10) == 5){org.tribot.api2007.Camera.setCameraRotation(Angle);}
 				
-				if(Rocks[0].isOnScreen() && Rocks[0].getModel().getVertexCount() < 150){
+				if(Rocks.length > 1 && Rocks[0].isOnScreen() && Rocks[0].getModel().getVertexCount() < 150){
 					
 					if(DynamicClicking.clickRSModel(Rocks[0].getModel(), "Mine")){
 						
 						CurrentlyMining = Rocks[0];
-						if(Rocks.length > 1){MineNext = Rocks[1];}
+						if(Rocks[1] != null){MineNext = Rocks[1];}
 						state = ScriptState.MINING;
 						
 						if(AntiBan.BOOL_TRACKER.HOVER_NEXT.next()){
@@ -406,7 +406,7 @@ public class Miner extends Script implements Painting{
 						if(Rocks[0].getModel().getVertexCount() < 150 && DynamicClicking.clickRSModel(Rocks[0].getModel(), "Mine")){
 							
 							CurrentlyMining = Rocks[0];
-							MineNext = Rocks[1];
+							if(Rocks[1] != null){MineNext = Rocks[1];}
 							state = ScriptState.MINING;
 						
 
@@ -460,7 +460,7 @@ public class Miner extends Script implements Painting{
 					if(DynamicClicking.clickRSModel(Rocks[1].getModel(), "Mine")){
 						
 						CurrentlyMining = Rocks[1];
-						MineNext = Rocks[0];
+						if(Rocks[0] != null){MineNext = Rocks[0];}
 						state = ScriptState.MINING;
 						
 						if(AntiBan.BOOL_TRACKER.HOVER_NEXT.next()){
@@ -489,7 +489,7 @@ public class Miner extends Script implements Painting{
 						if(Rocks[1].getModel().getVertexCount() < 150 && DynamicClicking.clickRSModel(Rocks[1].getModel(), "Mine")){
 							
 							CurrentlyMining = Rocks[1];
-							MineNext = Rocks[0];
+							if(Rocks[0] != null){MineNext = Rocks[0];}
 							state = ScriptState.MINING;
 							
 							if(AntiBan.BOOL_TRACKER.HOVER_NEXT.next()){
