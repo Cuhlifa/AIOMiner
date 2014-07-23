@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -46,73 +47,49 @@ import org.tribot.script.interfaces.Painting;
 
 import scripts.MinerPlusPlus.GUI;
 import scripts.MinerPlusPlus.MiningMethod;
+import scripts.MinerPlusPlus.Node;
 import scripts.MinerPlusPlus.ScriptState;
+import scripts.Nodes.Bank;
+import scripts.Nodes.Drop;
+import scripts.Nodes.Mine;
 
 @ScriptManifest(authors = { "Peticca10" }, name = "AIOMiner++", category = "Mining")
 public class Miner extends Script implements Painting {
 
 	// Variables
-	public ABCUtil AntiBan = new ABCUtil();
-	public boolean GUI_ISCOMPLETE = false;
-	public RSObject CurrentlyMining;
-	public RSObject MineNext;
-	public int[] SelectedOres;
-	public Set<Integer> SelectedOresSet = new HashSet<>();
-	public int StartingLevel;
-	public int StartingXP;
-	public long StartTime;
-	public int MinedOres = 0;
-	public RSTile StartTile;
-	public GUI gui;
-	public boolean AdvancedHUD = false;
-	public boolean HighlightPath = false;
-	public boolean HighlightModel = false;
-	public boolean DrawHUD = false;
-	public MiningMethod method = MiningMethod.BANKING;
-	public ScriptState state = ScriptState.IDLE;
-	public final int[] PICKAXES = { 1265, 1267, 1269, 1271, 1273, 1275 };
-	public final int[] PICKAXE_HEADS = { 480, 482, 484, 486, 488, 490 };
-	public final int PICKAXE_HANDLE = 466;
-	private static final int[] ANIMATIONS = { 624, 625, 628 };
-	public Image HUD;
-	public int InventoryCount;
-	public boolean SelectMode = false;
-	public long PathPaintTimeout = 0;
-	public RSTile[] WalkPath;
-	public String[] OreNames = { "Tin ore", "Copper ore", "Silver ore",
-			"Runite ore", "Iron ore", "Coal", "Gold ore", "ore",
+	public static ABCUtil AntiBan = new ABCUtil();
+	public static boolean GUI_ISCOMPLETE = false;
+	public static RSObject CurrentlyMining;
+	public static RSObject MineNext;
+	public static int[] SelectedOres;
+	public static Set<Integer> SelectedOresSet = new HashSet<>();
+	public static int StartingLevel;
+	public static int StartingXP;
+	public static long StartTime;
+	public static int MinedOres = 0;
+	public static RSTile StartTile;
+	public static GUI gui;
+	public static boolean AdvancedHUD = false;
+	public static boolean HighlightPath = false;
+	public static boolean HighlightModel = false;
+	public static boolean DrawHUD = false;
+	public static MiningMethod method = MiningMethod.BANKING;
+	public static ScriptState state = ScriptState.IDLE;
+	public static final String[] PICKAXES = {"Bronze pickaxe","Iron pickaxe","Steel pickaxe","Mithril pickaxe","Adamant pickaxe","Rune pickaxe","Dragon pickaxe"};
+	public static final String[] PICKAXE_HEADS = {"Bronze pick head","Iron pick head","Steel pick head","Mithril pick head","Adamant pick head","Rune pick head","Dragon pick head"};
+	public static final int PICKAXE_HANDLE = 466;
+	public static final int[] ANIMATIONS = { 624, 625, 628 };
+	public static Image HUD;
+	public static int InventoryCount;
+	public static boolean SelectMode = false;
+	public static long PathPaintTimeout = 0;
+	public static RSTile[] WalkPath;
+	public static String[] OreNames = { "Tin ore", "Copper ore", "Silver ore",
+			"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
 			"Adamantite ore" };
-
-	private void Bank() {
-
-		if (WebWalking.walkToBank()) {
-
-			if (Banking.openBank()) {
-
-				if (Banking.isBankScreenOpen()) {
-
-					Banking.depositAllExcept(PICKAXES);
-					sleep(100, 400);
-					Banking.close();
-					sleep(AntiBan.DELAY_TRACKER.NEW_OBJECT.next());
-					AntiBan.DELAY_TRACKER.NEW_OBJECT.reset();
-					InventoryCount = Inventory.getCount(OreNames);
-					WalkToMine();
-
-				} else {
-
-					sleep(AntiBan.DELAY_TRACKER.NEW_OBJECT.next());
-					AntiBan.DELAY_TRACKER.NEW_OBJECT.reset();
-					WalkToMine();
-
-				}
-
-			}
-
-		}
-
-	}
-
+	public static ArrayList<Node> Nodes = new ArrayList<Node>();
+	public static Miner miner;
+	
 	public boolean containsID(int Id) {
 
 		if (SelectedOres != null && SelectedOres.length > 0) {
@@ -133,272 +110,42 @@ public class Miner extends Script implements Painting {
 
 	}
 
-	private void Drop() {
-
-		Inventory.dropAllExcept(PICKAXES);
-		InventoryCount = 0;
-
-	}
-
-	public void findPickaxeHead() {
-
-		RSGroundItem[] Objs = GroundItems.find(PICKAXE_HEADS);
-
-		if (Objs.length > 0 && Inventory.getCount(PICKAXE_HANDLE) > 0
-				|| Equipment.getCount(PICKAXE_HANDLE) > 0) {
-
-			if (Objs[0].isOnScreen()) {
-
-				if (Objs[0].click("Take")) {
-
-					sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
-					AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
-					RSItem[] head = Inventory.find(PICKAXE_HEADS);
-					RSItem[] handle = Inventory.find(PICKAXE_HANDLE);
-
-					if (head[0].click("Use")) {
-
-						sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
-						AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
-						handle[0].click("Use");
-
-					}
-
-				}
-
-			}
-
-		}
-
-	}
-
-	private boolean isMining() {
-		for (int i : ANIMATIONS) {
-			if (Player.getAnimation() == i) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public void Mine() {
-
-		Random Camera = new Random();
-
-		RSObject[] Rocks = Objects.findNearest(20, SelectedOres);
-
-		if (Rocks.length > 0) {
-
-			if (AntiBan.BOOL_TRACKER.USE_CLOSEST.next() || Rocks.length < 2) {
-
-				switch (Camera.nextInt(1)) {
-
-				case 0:
-
-					org.tribot.api2007.Camera
-							.setRotationMethod(ROTATION_METHOD.ONLY_KEYS);
-
-					break;
-
-				case 1:
-
-					org.tribot.api2007.Camera
-							.setRotationMethod(ROTATION_METHOD.ONLY_MOUSE);
-
-					break;
-
-				default:
-					break;
-				}
-
-				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0]
-						.getPosition()) - General.random(-70, 70);
-				if (General.random(0, 10) == 5) {
-					org.tribot.api2007.Camera.setCameraRotation(Angle);
-				}
-
-				if (Rocks.length > 1 && Rocks[0].isOnScreen()
-						&& Rocks[0].getModel().getVertexCount() < 150) {
-
-					if (DynamicClicking.clickRSModel(Rocks[0].getModel(),
-							"Mine")) {
-
-						CurrentlyMining = Rocks[0];
-						if (Rocks[1] != null) {
-							MineNext = Rocks[1];
-						}
-						state = ScriptState.MINING;
-
-						if (AntiBan.BOOL_TRACKER.HOVER_NEXT.next()) {
-
-							sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT.next());
-							AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-							Rocks[1].hover(new Point(General.random(-13, 10),
-									General.random(-9, 5)), new Point(null));
-							AntiBan.BOOL_TRACKER.HOVER_NEXT.reset();
-
-						} else {
-
-							sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT.next());
-							AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-							Rocks[0].hover(new Point(General.random(-13, 10),
-									General.random(-9, 5)), new Point(null));
-
-						}
-
-					}
-
-				} else {
-
-					if (WebWalking.walkTo(Rocks[0].getPosition())) {
-
-						sleep(100, 300);
-
-						if (Rocks[0].getModel().getVertexCount() < 150
-								&& DynamicClicking.clickRSModel(
-										Rocks[0].getModel(), "Mine")) {
-
-							CurrentlyMining = Rocks[0];
-							if (Rocks[1] != null) {
-								MineNext = Rocks[1];
-							}
-							state = ScriptState.MINING;
-
-							if (AntiBan.BOOL_TRACKER.HOVER_NEXT.next()) {
-
-								sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT
-										.next());
-								AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-								Rocks[1].hover();
-								AntiBan.BOOL_TRACKER.HOVER_NEXT.reset();
-
-							} else {
-
-								sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT
-										.next());
-								AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-								Rocks[0].hover();
-
-							}
-
-						}
-
-					}
-
-				}
-				AntiBan.BOOL_TRACKER.USE_CLOSEST.reset();
-			} else {
-
-				switch (Camera.nextInt(1)) {
-
-				case 0:
-
-					org.tribot.api2007.Camera
-							.setRotationMethod(ROTATION_METHOD.ONLY_KEYS);
-
-					break;
-
-				case 1:
-
-					org.tribot.api2007.Camera
-							.setRotationMethod(ROTATION_METHOD.ONLY_MOUSE);
-
-					break;
-
-				default:
-					break;
-				}
-
-				int Angle = org.tribot.api2007.Camera.getTileAngle(Rocks[0]
-						.getPosition()) - General.random(-30, 30);
-				org.tribot.api2007.Camera.setCameraRotation(Angle);
-
-				if (Rocks[1].isOnScreen()
-						&& Rocks[1].getModel().getVertexCount() < 150) {
-
-					if (DynamicClicking.clickRSModel(Rocks[1].getModel(),
-							"Mine")) {
-
-						CurrentlyMining = Rocks[1];
-						if (Rocks[0] != null) {
-							MineNext = Rocks[0];
-						}
-						state = ScriptState.MINING;
-
-						if (AntiBan.BOOL_TRACKER.HOVER_NEXT.next()) {
-
-							sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT.next() + 200);
-							AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-							Rocks[0].hover(new Point(General.random(-13, 10),
-									General.random(-9, 5)), new Point(0, 0));
-							AntiBan.BOOL_TRACKER.HOVER_NEXT.reset();
-
-						} else {
-
-							sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT.next() + 200);
-							AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-							Rocks[1].hover(new Point(General.random(-13, 10),
-									General.random(-9, 5)), new Point(0, 0));
-
-						}
-
-					}
-
-				} else {
-
-					if (WebWalking.walkTo(Rocks[1].getPosition())) {
-
-						sleep(100, 300);
-
-						if (Rocks[1].getModel().getVertexCount() < 150
-								&& DynamicClicking.clickRSModel(
-										Rocks[1].getModel(), "Mine")) {
-
-							CurrentlyMining = Rocks[1];
-							if (Rocks[0] != null) {
-								MineNext = Rocks[0];
-							}
-							state = ScriptState.MINING;
-
-							if (AntiBan.BOOL_TRACKER.HOVER_NEXT.next()) {
-
-								sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT
-										.next() + 200);
-								AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-								Rocks[0].hover(
-										new Point(General.random(-13, 10),
-												General.random(-9, 5)),
-										new Point(0, 0));
-								AntiBan.BOOL_TRACKER.HOVER_NEXT.reset();
-
-							} else {
-
-								sleep(AntiBan.DELAY_TRACKER.SWITCH_OBJECT
-										.next() + 200);
-								AntiBan.DELAY_TRACKER.SWITCH_OBJECT.reset();
-								Rocks[1].hover(
-										new Point(General.random(-13, 10),
-												General.random(-9, 5)),
-										new Point(0, 0));
-
-							}
-
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
-	}
+//	public void findPickaxeHead() {
+//
+//		RSGroundItem[] Objs = GroundItems.find(PICKAXE_HEADS);
+//
+//		if (Objs.length > 0 && Inventory.getCount(PICKAXE_HANDLE) > 0
+//				|| Equipment.getCount(PICKAXE_HANDLE) > 0) {
+//
+//			if (Objs[0].isOnScreen()) {
+//
+//				if (Objs[0].click("Take")) {
+//
+//					sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
+//					AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
+//					RSItem[] head = Inventory.find(PICKAXE_HEADS);
+//					RSItem[] handle = Inventory.find(PICKAXE_HANDLE);
+//
+//					if (head[0].click("Use")) {
+//
+//						sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
+//						AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
+//						handle[0].click("Use");
+//
+//					}
+//
+//				}
+//
+//			}
+//
+//		}
+//
+//	}
 
 	@Override
 	public void onPaint(Graphics g) {
 
-		Mouse.setSpeed(General.random(95, 110));
+		Mouse.setSpeed(General.random(110, 140));
 
 		int CurrentXP = Skills.getXP(SKILLS.MINING);
 		int GainedXP = CurrentXP - StartingXP;
@@ -534,26 +281,30 @@ public class Miner extends Script implements Painting {
 			sleep(2000);
 			run();
 
+		}else{
+			
+			miner = this;
+			General.useAntiBanCompliance(true);
+			gui = new GUI(this);
+			gui.frmMiner.setVisible(true);
+			StartTile = Player.getPosition();
+			StartingLevel = SKILLS.MINING.getActualLevel();
+			StartingXP = Skills.getXP(SKILLS.MINING);
+			StartTime = System.currentTimeMillis();
+			try {
+				HUD = ImageIO.read(new URL("http://i.imgur.com/EWhEBTU.png"));
+			} catch (Exception e) {
+			}
+			InventoryCount = Inventory.getCount(OreNames);
+			Nodes.add(new Bank());
+			Nodes.add(new scripts.Nodes.AntiBan());
+			Nodes.add(new Drop());
+			Nodes.add(new Mine());
+			Start();
+			
 		}
-
-		ThreadSettings.get().setObjectCModelMethod(
-				ThreadSettings.MODEL_CLICKING_METHOD.CENTRE);
-		General.useAntiBanCompliance(true);
-		gui = new GUI(this);
-		gui.frmMiner.setVisible(true);
-		StartTile = Player.getPosition();
-		StartingLevel = SKILLS.MINING.getActualLevel();
-		StartingXP = Skills.getXP(SKILLS.MINING);
-		StartTime = System.currentTimeMillis();
-		try {
-			HUD = ImageIO.read(new URL("http://i.imgur.com/EWhEBTU.png"));
-		} catch (Exception e) {
-		}
-		InventoryCount = Inventory.getCount(OreNames);
-		Start();
 
 	}
-
 	public int[] SetToArray(Set<Integer> SetInt) {
 
 		int Count = 0;
@@ -570,36 +321,36 @@ public class Miner extends Script implements Painting {
 
 	}
 
-	private void stairFailsafe() {
-		final RSObject[] stairs = Objects.findNearest(10, 2162);
-		if (stairs.length > 0) {
-			if (stairs[0].isOnScreen()) {
-				stairs[0].hover(
-						new Point(General.random(-13, 10), General
-								.random(-9, 5)), new Point(null));
-				Timing.waitCondition(new Condition() {
-
-					@Override
-					public boolean active() {
-						return Game.getUptext().contains("Stairs");
-					}
-
-				}, 691);
-				if (Game.getUptext().contains("Stairs")) {
-					Mouse.click(1);
-				}
-				Timing.waitCondition(new Condition() {
-
-					@Override
-					public boolean active() {
-						return !stairs[0].isOnScreen();
-					}
-
-				}, 2861);
-			}
-		}
-
-	}
+//	private void stairFailsafe() {
+//		final RSObject[] stairs = Objects.findNearest(10, 2162);
+//		if (stairs.length > 0) {
+//			if (stairs[0].isOnScreen()) {
+//				stairs[0].hover(
+//						new Point(General.random(-13, 10), General
+//								.random(-9, 5)), new Point(null));
+//				Timing.waitCondition(new Condition() {
+//
+//					@Override
+//					public boolean active() {
+//						return Game.getUptext().contains("Stairs");
+//					}
+//
+//				}, 691);
+//				if (Game.getUptext().contains("Stairs")) {
+//					Mouse.click(1);
+//				}
+//				Timing.waitCondition(new Condition() {
+//
+//					@Override
+//					public boolean active() {
+//						return !stairs[0].isOnScreen();
+//					}
+//
+//				}, 2861);
+//			}
+//		}
+//
+//	}
 
 	public void Start() {
 
@@ -607,76 +358,14 @@ public class Miner extends Script implements Painting {
 
 			if (GUI_ISCOMPLETE && Login.getLoginState() == STATE.INGAME) {
 
-				stairFailsafe();
-
-				if (isMining() || Player.getAnimation() == -1) {
-
-					AntiBan.performCombatCheck();
-					AntiBan.performEquipmentCheck();
-					AntiBan.performExamineObject();
-					AntiBan.performFriendsCheck();
-					AntiBan.performLeaveGame();
-					AntiBan.performMusicCheck();
-					AntiBan.performPickupMouse();
-					AntiBan.performQuestsCheck();
-					AntiBan.performRandomMouseMovement();
-					AntiBan.performRandomRightClick();
-					AntiBan.performRotateCamera();
-					AntiBan.performTimedActions(SKILLS.MINING);
-					AntiBan.performXPCheck(SKILLS.MINING);
-
+				System.out.println("Checking Node");
+				
+				for(Node n : Nodes){
+					System.out.println("Checking " + n.getName());
+					if(n.validate()){n.execute(); System.out.println("Excuting " + n.getName());}
+					
 				}
-
-				if (Inventory.isFull()) {
-
-					if (method == MiningMethod.BANKING) {
-
-						state = ScriptState.BANKING;
-						Bank();
-
-					}
-
-					if (method == MiningMethod.POWERMINE) {
-
-						state = ScriptState.DROPING;
-						Drop();
-
-					}
-
-				}
-
-				if (!Inventory.isFull()
-						&& PathFinding.distanceTo(StartTile, false) > 30
-						&& !isMining()) {
-
-					state = ScriptState.WALKING;
-					WalkToMine();
-
-				}
-
-				if (method == MiningMethod.M1D1
-						&& Inventory.getCount(OreNames) > 0
-						&& Player.getAnimation() == -1) {
-
-					state = ScriptState.DROPING;
-					Drop();
-
-				}
-
-				if (!Inventory.isFull()
-						&& PathFinding.distanceTo(StartTile, false) < 30
-						&& !isMining()) {
-
-					Mine();
-
-				}
-
-				if (Inventory.getCount(PICKAXE_HANDLE) > 0) {
-
-					findPickaxeHead();
-
-				}
-
+				
 				int InvCount = Inventory.getCount(OreNames);
 				if (InvCount > InventoryCount) {
 
@@ -687,7 +376,7 @@ public class Miner extends Script implements Painting {
 
 			}
 
-			sleep(2500, 4000);
+			sleep(300,750);
 		}
 
 	}
@@ -719,16 +408,6 @@ public class Miner extends Script implements Painting {
 				}
 
 			}
-		}
-
-	}
-
-	private void WalkToMine() {
-
-		if (WebWalking.walkTo(StartTile)) {
-
-			state = ScriptState.IDLE;
-
 		}
 
 	}
