@@ -53,7 +53,7 @@ public class Mine extends Node {
 					General.sleep(Miner.AntiBan.DELAY_TRACKER.NEW_OBJECT.next());
 					Miner.AntiBan.DELAY_TRACKER.NEW_OBJECT.reset();
 					
-					if(Miner.miner.containsID(ores[use].getDefinition().getID()) && DynamicClicking.clickRSModel(ores[use].getModel(), 1)){
+					if(Miner.miner.containsID(ores[use].getDefinition().getID())&& vaildOre(ores[use]) && DynamicClicking.clickRSModel(ores[use].getModel(), 1)){
 						
 						Miner.CurrentlyMining = ores[use];
 						
@@ -97,6 +97,17 @@ public class Mine extends Node {
 			
 		}
 		
+	}
+
+	private boolean vaildOre(RSObject rsObject) {
+		
+		if(rsObject.getModel().getVertexCount() > 150){
+			
+			return false;
+			
+		}
+		
+		return true;
 	}
 
 	@Override
