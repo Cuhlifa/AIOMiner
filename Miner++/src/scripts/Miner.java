@@ -285,7 +285,7 @@ public class Miner extends Script implements Painting {
 			
 			miner = this;
 			General.useAntiBanCompliance(true);
-			gui = new GUI(this);
+			gui = new GUI();
 			gui.frmMiner.setVisible(true);
 			StartTile = Player.getPosition();
 			StartingLevel = SKILLS.MINING.getActualLevel();
@@ -377,37 +377,6 @@ public class Miner extends Script implements Painting {
 			}
 
 			sleep(300,750);
-		}
-
-	}
-
-	public void updateOres() {
-
-		if (!GUI_ISCOMPLETE && Login.getLoginState() == STATE.INGAME) {
-
-			RSObject[] Objs = Objects.getAll(30);
-			Set<Integer> IDs = new HashSet<>();
-
-			for (RSObject obj : Objs) {
-
-				if (obj.getDefinition().getName().equalsIgnoreCase("Rocks")) {
-
-					IDs.add(obj.getID());
-
-				}
-
-			}
-			if (IDs.size() > 0) {
-
-				gui.getList_Ores().removeAll();
-
-				for (Integer i : IDs) {
-
-					gui.getList_Ores().add("" + i);
-
-				}
-
-			}
 		}
 
 	}

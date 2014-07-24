@@ -4,10 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JCheckBox;
-
 import javax.swing.JLabel;
-
-import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JTextArea;
+
 import java.awt.List;
 import java.awt.Font;
 import java.util.HashSet;
@@ -27,10 +25,12 @@ import java.util.Set;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 
+import org.tribot.api2007.Objects;
+import org.tribot.api2007.types.RSObject;
+
 public class GUI {
 
 	public JFrame frmMiner;
-	public Miner miner;
 	public JButton btnStart;
 	public JComboBox comboBox;
 	public JCheckBox chckbxAntiban;
@@ -72,11 +72,6 @@ public class GUI {
 		initialize();
 	}
 
-	public GUI(Miner main) {
-		miner = main;
-		initialize();
-	}
-
 	/**
 	 */
 	private void initialize() {
@@ -93,47 +88,47 @@ public class GUI {
 
 				if (chckbxHighlightModels.isSelected()) {
 
-					miner.HighlightModel = true;
+					Miner.HighlightModel = true;
 
 				}
 
 				if (chckbxHighlightWalkPath.isSelected()) {
 
-					miner.HighlightPath = true;
+					Miner.HighlightPath = true;
 
 				}
 
 				if (chckbxDrawHud.isSelected()) {
 
-					miner.DrawHUD = true;
+					Miner.DrawHUD = true;
 
 				}
 
 				if (chckbxAdvancedHud.isSelected()) {
 
-					miner.AdvancedHUD = true;
+					Miner.AdvancedHUD = true;
 
 				}
 
 				if (comboBox.getSelectedItem().equals("Bank")) {
 
-					miner.method = MiningMethod.BANKING;
+					Miner.method = MiningMethod.BANKING;
 
 				}
 
 				if (comboBox.getSelectedItem().equals("Powermine")) {
 
-					miner.method = MiningMethod.POWERMINE;
+					Miner.method = MiningMethod.POWERMINE;
 
 				}
 
 				if (comboBox.getSelectedItem().equals("M1D1")) {
 
-					miner.method = MiningMethod.M1D1;
+					Miner.method = MiningMethod.M1D1;
 
 				}
 
-				miner.GUI_ISCOMPLETE = true;
+				Miner.GUI_ISCOMPLETE = true;
 				frmMiner.dispose();
 
 			}
@@ -192,6 +187,7 @@ public class GUI {
 		return lblOres;
 	}
 
+	@SuppressWarnings("deprecation")
 	public List getList_Ores() {
 		if (list_Ores == null) {
 			list_Ores = new List();
@@ -201,6 +197,7 @@ public class GUI {
 		return list_Ores;
 	}
 
+	@SuppressWarnings("deprecation")
 	public List getList_selectedores() {
 		if (list_selectedores == null) {
 			list_selectedores = new List();
@@ -254,7 +251,7 @@ public class GUI {
 
 						}
 
-						miner.SelectedOres = miner.SetToArray(IDs);
+						Miner.SelectedOres = Miner.miner.SetToArray(IDs);
 
 					}
 
@@ -283,7 +280,7 @@ public class GUI {
 
 					}
 
-					miner.SelectedOres = miner.SetToArray(IDs);
+					Miner.SelectedOres = Miner.miner.SetToArray(IDs);
 
 				}
 			});
@@ -292,14 +289,41 @@ public class GUI {
 		return btnRemove;
 	}
 
+	public void addOres(String s){
+		
+		getList_Ores().add(s);
+		
+	}
+	
 	public JButton getBtnRefresh() {
 		if (btnRefresh == null) {
 			btnRefresh = new JButton("Refresh");
 			btnRefresh.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					miner.updateOres();
+					System.out.println("Refreshing");
+					System.out.println("updating ores");
+					
+					System.out.println("passed check");
+					
+					RSObject[] Objs = Objects.find(50, "Rocks");
+					System.out.println("passed objs");
+					Set<Integer> IDs = new HashSet<>();
+					System.out.println("passed hash");
 
+					for(RSObject obj : Objs){
+						
+						System.out.println("passed objs");
+						IDs.add(obj.getDefinition().getID());
+						System.out.println("passed adding id");
+					}
+					
+					for(Integer inte : IDs){
+						
+						getList_Ores().add("" + inte);
+						System.out.println("passed adding to list");
+					}
+				
 				}
 			});
 			btnRefresh.setBounds(20, 472, 89, 23);
