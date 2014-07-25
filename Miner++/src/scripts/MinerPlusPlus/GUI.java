@@ -88,19 +88,19 @@ public class GUI {
 
 				if (chckbxHighlightModels.isSelected()) {
 
-					Miner.HighlightModel = true;
+					Miner.highlightModel = true;
 
 				}
 
 				if (chckbxHighlightWalkPath.isSelected()) {
 
-					Miner.HighlightPath = true;
+					Miner.highlightPath = true;
 
 				}
 
 				if (chckbxDrawHud.isSelected()) {
 
-					Miner.DrawHUD = true;
+					Miner.drawHUD = true;
 
 				}
 
@@ -128,7 +128,7 @@ public class GUI {
 
 				}
 
-				Miner.GUI_ISCOMPLETE = true;
+				Miner.guiIsComplete = true;
 				frmMiner.dispose();
 
 			}
