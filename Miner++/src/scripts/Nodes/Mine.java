@@ -9,10 +9,12 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api.util.ABCUtil;
 import org.tribot.api2007.Inventory;
+import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.PathFinding;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.WebWalking;
+import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 
 import scripts.Miner;
@@ -100,6 +102,18 @@ public class Mine extends Node {
 	}
 
 	private boolean vaildOre(RSObject rsObject) {
+		
+		RSNPC[] Smoking = NPCs.getAll();
+		
+		for(RSNPC npc : Smoking){
+			
+			if(npc.getPosition().equals(rsObject.getPosition())){
+				
+				return false;
+				
+			}
+			
+		}
 		
 		if(rsObject.getModel().getVertexCount() > 150){
 			
