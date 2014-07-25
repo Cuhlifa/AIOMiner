@@ -61,11 +61,11 @@ public class Miner extends Script implements Painting {
 	public static MiningMethod method = MiningMethod.BANKING;
 	public static ScriptState state = ScriptState.IDLE;
 	public static final String[] PICKAXES = { "Bronze pickaxe", "Iron pickaxe",
-		"Steel pickaxe", "Mithril pickaxe", "Adamant pickaxe",
-		"Rune pickaxe", "Dragon pickaxe" };
+			"Steel pickaxe", "Mithril pickaxe", "Adamant pickaxe",
+			"Rune pickaxe", "Dragon pickaxe" };
 	public static final String[] PICKAXE_HEADS = { "Bronze pick head",
-		"Iron pick head", "Steel pick head", "Mithril pick head",
-		"Adamant pick head", "Rune pick head", "Dragon pick head" };
+			"Iron pick head", "Steel pick head", "Mithril pick head",
+			"Adamant pick head", "Rune pick head", "Dragon pick head" };
 	public static final String PICKAXE_HANDLE = "Pickaxe handle";
 	public static final int[] ANIMATIONS = { 624, 625, 628 };
 	public static Image HUD;
@@ -74,10 +74,20 @@ public class Miner extends Script implements Painting {
 	public static long pathPaintTimeout = 0;
 	public static RSTile[] walkPath;
 	public static String[] oreNames = { "Tin ore", "Copper ore", "Silver ore",
-		"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
-	"Adamantite ore" };
+			"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
+			"Adamantite ore" };
 	public static ArrayList<Node> nodes = new ArrayList<Node>();
 	public static Miner miner;
+	int CurrentXP;
+	int GainedXP;
+	int CurrentLevel;
+	int GainedLevel = CurrentLevel - startingLevel;
+	long RunTime;
+	long hours;
+	long minutes;
+	long seconds;
+	int MinedOresHour;
+	int GainedXPHour;
 
 	public boolean containsID(int Id) {
 
@@ -133,26 +143,6 @@ public class Miner extends Script implements Painting {
 
 	@Override
 	public void onPaint(Graphics g) {
-
-		int CurrentXP = Skills.getXP(SKILLS.MINING);
-		int GainedXP = CurrentXP - startingXP;
-		int CurrentLevel = Skills.getActualLevel(SKILLS.MINING);
-		int GainedLevel = CurrentLevel - startingLevel;
-		long RunTime = (System.currentTimeMillis() - startTime) / 1000;
-		long hours = TimeUnit.SECONDS.toHours(RunTime);
-		long minutes = TimeUnit.SECONDS.toMinutes(RunTime
-				- TimeUnit.HOURS.toSeconds(hours));
-		long seconds = RunTime
-				- (TimeUnit.HOURS.toSeconds(hours) + TimeUnit.MINUTES
-						.toSeconds(minutes));
-		int MinedOresHour = 0;
-		int GainedXPHour = 0;
-		if (minedOres > 0) {
-			MinedOresHour = (int) ((minedOres * 3600) / RunTime);
-		}
-		if (GainedXP > 0) {
-			GainedXPHour = (int) ((GainedXP * 3600) / RunTime);
-		}
 
 		if (Login.getLoginState() == STATE.INGAME) {
 
@@ -343,8 +333,28 @@ public class Miner extends Script implements Painting {
 	public void Start() {
 
 		while (true) {
-			
+
 			Mouse.setSpeed(General.random(110, 140));
+
+			CurrentXP = Skills.getXP(SKILLS.MINING);
+			GainedXP = CurrentXP - startingXP;
+			CurrentLevel = Skills.getActualLevel(SKILLS.MINING);
+			GainedLevel = CurrentLevel - startingLevel;
+			RunTime = (System.currentTimeMillis() - startTime) / 1000;
+			hours = TimeUnit.SECONDS.toHours(RunTime);
+			minutes = TimeUnit.SECONDS.toMinutes(RunTime
+					- TimeUnit.HOURS.toSeconds(hours));
+			seconds = RunTime
+					- (TimeUnit.HOURS.toSeconds(hours) + TimeUnit.MINUTES
+							.toSeconds(minutes));
+			MinedOresHour = 0;
+			GainedXPHour = 0;
+			if (minedOres > 0) {
+				MinedOresHour = (int) ((minedOres * 3600) / RunTime);
+			}
+			if (GainedXP > 0) {
+				GainedXPHour = (int) ((GainedXP * 3600) / RunTime);
+			}
 
 			if (guiIsComplete && Login.getLoginState() == STATE.INGAME) {
 
