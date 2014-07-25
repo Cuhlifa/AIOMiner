@@ -134,8 +134,6 @@ public class Miner extends Script implements Painting {
 	@Override
 	public void onPaint(Graphics g) {
 
-		Mouse.setSpeed(General.random(110, 140));
-
 		int CurrentXP = Skills.getXP(SKILLS.MINING);
 		int GainedXP = CurrentXP - startingXP;
 		int CurrentLevel = Skills.getActualLevel(SKILLS.MINING);
@@ -345,6 +343,8 @@ public class Miner extends Script implements Painting {
 	public void Start() {
 
 		while (true) {
+			
+			Mouse.setSpeed(General.random(110, 140));
 
 			if (guiIsComplete && Login.getLoginState() == STATE.INGAME) {
 
