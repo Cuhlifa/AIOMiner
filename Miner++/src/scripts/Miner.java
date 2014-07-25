@@ -5,42 +5,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
-import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
-import org.tribot.api.types.generic.Condition;
 import org.tribot.api.util.ABCUtil;
-import org.tribot.api2007.Banking;
-import org.tribot.api2007.Camera.ROTATION_METHOD;
-import org.tribot.api2007.Equipment;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Login;
 import org.tribot.api2007.Login.STATE;
 import org.tribot.api2007.Objects;
-import org.tribot.api2007.PathFinding;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.Skills.SKILLS;
-import org.tribot.api2007.WebWalking;
-import org.tribot.api2007.types.RSGroundItem;
-import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.api2007.util.ThreadSettings;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.Painting;
@@ -75,8 +60,12 @@ public class Miner extends Script implements Painting {
 	public static boolean drawHUD = false;
 	public static MiningMethod method = MiningMethod.BANKING;
 	public static ScriptState state = ScriptState.IDLE;
-	public static final String[] PICKAXES = {"Bronze pickaxe","Iron pickaxe","Steel pickaxe","Mithril pickaxe","Adamant pickaxe","Rune pickaxe","Dragon pickaxe"};
-	public static final String[] PICKAXE_HEADS = {"Bronze pick head","Iron pick head","Steel pick head","Mithril pick head","Adamant pick head","Rune pick head","Dragon pick head"};
+	public static final String[] PICKAXES = { "Bronze pickaxe", "Iron pickaxe",
+		"Steel pickaxe", "Mithril pickaxe", "Adamant pickaxe",
+		"Rune pickaxe", "Dragon pickaxe" };
+	public static final String[] PICKAXE_HEADS = { "Bronze pick head",
+		"Iron pick head", "Steel pick head", "Mithril pick head",
+		"Adamant pick head", "Rune pick head", "Dragon pick head" };
 	public static final String PICKAXE_HANDLE = "Pickaxe handle";
 	public static final int[] ANIMATIONS = { 624, 625, 628 };
 	public static Image HUD;
@@ -85,11 +74,11 @@ public class Miner extends Script implements Painting {
 	public static long pathPaintTimeout = 0;
 	public static RSTile[] walkPath;
 	public static String[] oreNames = { "Tin ore", "Copper ore", "Silver ore",
-			"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
-			"Adamantite ore" };
+		"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
+	"Adamantite ore" };
 	public static ArrayList<Node> nodes = new ArrayList<Node>();
 	public static Miner miner;
-	
+
 	public boolean containsID(int Id) {
 
 		if (selectedOres != null && selectedOres.length > 0) {
@@ -110,37 +99,37 @@ public class Miner extends Script implements Painting {
 
 	}
 
-//	public void findPickaxeHead() {
-//
-//		RSGroundItem[] Objs = GroundItems.find(PICKAXE_HEADS);
-//
-//		if (Objs.length > 0 && Inventory.getCount(PICKAXE_HANDLE) > 0
-//				|| Equipment.getCount(PICKAXE_HANDLE) > 0) {
-//
-//			if (Objs[0].isOnScreen()) {
-//
-//				if (Objs[0].click("Take")) {
-//
-//					sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
-//					AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
-//					RSItem[] head = Inventory.find(PICKAXE_HEADS);
-//					RSItem[] handle = Inventory.find(PICKAXE_HANDLE);
-//
-//					if (head[0].click("Use")) {
-//
-//						sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
-//						AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
-//						handle[0].click("Use");
-//
-//					}
-//
-//				}
-//
-//			}
-//
-//		}
-//
-//	}
+	// public void findPickaxeHead() {
+	//
+	// RSGroundItem[] Objs = GroundItems.find(PICKAXE_HEADS);
+	//
+	// if (Objs.length > 0 && Inventory.getCount(PICKAXE_HANDLE) > 0
+	// || Equipment.getCount(PICKAXE_HANDLE) > 0) {
+	//
+	// if (Objs[0].isOnScreen()) {
+	//
+	// if (Objs[0].click("Take")) {
+	//
+	// sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
+	// AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
+	// RSItem[] head = Inventory.find(PICKAXE_HEADS);
+	// RSItem[] handle = Inventory.find(PICKAXE_HANDLE);
+	//
+	// if (head[0].click("Use")) {
+	//
+	// sleep(AntiBan.DELAY_TRACKER.ITEM_INTERACTION.next());
+	// AntiBan.DELAY_TRACKER.ITEM_INTERACTION.reset();
+	// handle[0].click("Use");
+	//
+	// }
+	//
+	// }
+	//
+	// }
+	//
+	// }
+	//
+	// }
 
 	@Override
 	public void onPaint(Graphics g) {
@@ -281,8 +270,8 @@ public class Miner extends Script implements Painting {
 			sleep(2000);
 			run();
 
-		}else{
-			
+		} else {
+
 			miner = this;
 			General.useAntiBanCompliance(true);
 			gui = new GUI();
@@ -301,10 +290,11 @@ public class Miner extends Script implements Painting {
 			nodes.add(new Drop());
 			nodes.add(new Mine());
 			Start();
-			
+
 		}
 
 	}
+
 	public int[] SetToArray(Set<Integer> SetInt) {
 
 		int Count = 0;
@@ -321,36 +311,36 @@ public class Miner extends Script implements Painting {
 
 	}
 
-//	private void stairFailsafe() {
-//		final RSObject[] stairs = Objects.findNearest(10, 2162);
-//		if (stairs.length > 0) {
-//			if (stairs[0].isOnScreen()) {
-//				stairs[0].hover(
-//						new Point(General.random(-13, 10), General
-//								.random(-9, 5)), new Point(null));
-//				Timing.waitCondition(new Condition() {
-//
-//					@Override
-//					public boolean active() {
-//						return Game.getUptext().contains("Stairs");
-//					}
-//
-//				}, 691);
-//				if (Game.getUptext().contains("Stairs")) {
-//					Mouse.click(1);
-//				}
-//				Timing.waitCondition(new Condition() {
-//
-//					@Override
-//					public boolean active() {
-//						return !stairs[0].isOnScreen();
-//					}
-//
-//				}, 2861);
-//			}
-//		}
-//
-//	}
+	// private void stairFailsafe() {
+	// final RSObject[] stairs = Objects.findNearest(10, 2162);
+	// if (stairs.length > 0) {
+	// if (stairs[0].isOnScreen()) {
+	// stairs[0].hover(
+	// new Point(General.random(-13, 10), General
+	// .random(-9, 5)), new Point(null));
+	// Timing.waitCondition(new Condition() {
+	//
+	// @Override
+	// public boolean active() {
+	// return Game.getUptext().contains("Stairs");
+	// }
+	//
+	// }, 691);
+	// if (Game.getUptext().contains("Stairs")) {
+	// Mouse.click(1);
+	// }
+	// Timing.waitCondition(new Condition() {
+	//
+	// @Override
+	// public boolean active() {
+	// return !stairs[0].isOnScreen();
+	// }
+	//
+	// }, 2861);
+	// }
+	// }
+	//
+	// }
 
 	public void Start() {
 
@@ -359,13 +349,16 @@ public class Miner extends Script implements Painting {
 			if (guiIsComplete && Login.getLoginState() == STATE.INGAME) {
 
 				System.out.println("Checking Node");
-				
-				for(Node n : nodes){
+
+				for (Node n : nodes) {
 					System.out.println("Checking " + n.getName());
-					if(n.validate()){n.execute(); System.out.println("Excuting " + n.getName());}
-					
+					if (n.validate()) {
+						n.execute();
+						System.out.println("Excuting " + n.getName());
+					}
+
 				}
-				
+
 				int InvCount = Inventory.getCount(oreNames);
 				if (InvCount > inventoryCount) {
 
@@ -376,7 +369,7 @@ public class Miner extends Script implements Painting {
 
 			}
 
-			sleep(300,750);
+			sleep(300, 750);
 		}
 
 	}

@@ -47,13 +47,13 @@ public class ZybezItem {
 	}
 
 	public static JSONObject readJsonFromUrl(String url) throws IOException,
-			JSONException {
+	JSONException {
 		HttpURLConnection connection = (HttpURLConnection) new URL(url)
-				.openConnection();
+		.openConnection();
 		connection
-				.setRequestProperty(
-						"User-Agent",
-						"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11");
+		.setRequestProperty(
+				"User-Agent",
+				"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11");
 		InputStreamReader is = new InputStreamReader(
 				connection.getInputStream());
 		try {
@@ -88,21 +88,20 @@ public class ZybezItem {
 		}
 		if (json != null && json.has("id")) {
 			try {
-				this.zybezId = json.getInt("id");
-				this.name = json.getString("name");
-				this.image = json.getString("image");
-				this.recentHigh = (int) Double.parseDouble(json
+				zybezId = json.getInt("id");
+				name = json.getString("name");
+				image = json.getString("image");
+				recentHigh = (int) Double.parseDouble(json
 						.getString("recent_high"));
-				this.recentLow = (int) Double.parseDouble(json
+				recentLow = (int) Double.parseDouble(json
 						.getString("recent_low"));
-				this.average = (int) Double.parseDouble(json
-						.getString("average"));
-				this.highAlch = json.getInt("high_alch");
+				average = (int) Double.parseDouble(json.getString("average"));
+				highAlch = json.getInt("high_alch");
 				JSONArray jsonOfferArr = json.getJSONArray("offers");
-				this.offers = new Offer[jsonOfferArr.length()];
+				offers = new Offer[jsonOfferArr.length()];
 				for (int i = 0; i < jsonOfferArr.length(); i++) {
-					this.offers[i] = new Offer(jsonOfferArr.getJSONObject(i),
-							this.getName());
+					offers[i] = new Offer(jsonOfferArr.getJSONObject(i),
+							getName());
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -120,21 +119,20 @@ public class ZybezItem {
 		}
 		if (json != null && json.has("id")) {
 			try {
-				this.zybezId = json.getInt("id");
+				zybezId = json.getInt("id");
 				this.name = json.getString("name");
-				this.image = json.getString("image");
-				this.recentHigh = (int) Double.parseDouble(json
+				image = json.getString("image");
+				recentHigh = (int) Double.parseDouble(json
 						.getString("recent_high"));
-				this.recentLow = (int) Double.parseDouble(json
+				recentLow = (int) Double.parseDouble(json
 						.getString("recent_low"));
-				this.average = (int) Double.parseDouble(json
-						.getString("average"));
-				this.highAlch = json.getInt("high_alch");
+				average = (int) Double.parseDouble(json.getString("average"));
+				highAlch = json.getInt("high_alch");
 				JSONArray jsonOfferArr = json.getJSONArray("offers");
-				this.offers = new Offer[jsonOfferArr.length()];
+				offers = new Offer[jsonOfferArr.length()];
 				for (int i = 0; i < jsonOfferArr.length(); i++) {
-					this.offers[i] = new Offer(jsonOfferArr.getJSONObject(i),
-							this.getName());
+					offers[i] = new Offer(jsonOfferArr.getJSONObject(i),
+							getName());
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

@@ -5,8 +5,6 @@ import org.tribot.api2007.Skills.SKILLS;
 
 import scripts.Miner;
 
-
-
 public class AntiBan extends scripts.MinerPlusPlus.Node {
 
 	@Override
@@ -41,16 +39,16 @@ public class AntiBan extends scripts.MinerPlusPlus.Node {
 	}
 
 	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "AntiBan";
+	}
+
+	@Override
 	public boolean validate() {
 
 		return Player.getAnimation() != -1;
 
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return "AntiBan";
 	}
 
 }

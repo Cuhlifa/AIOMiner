@@ -12,24 +12,26 @@ public class Drop extends Node {
 	public void execute() {
 
 		Inventory.dropAllExcept(Miner.PICKAXES);
-		
-	}
 
-	@Override
-	public boolean validate() {
-
-		if(Inventory.isFull() && Miner.method == MiningMethod.POWERMINE){
-			
-			return true;
-			
-		}else{return false;}
-	
 	}
 
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return "Drop";
+	}
+
+	@Override
+	public boolean validate() {
+
+		if (Inventory.isFull() && Miner.method == MiningMethod.POWERMINE) {
+
+			return true;
+
+		} else {
+			return false;
+		}
+
 	}
 
 }
