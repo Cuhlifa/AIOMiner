@@ -25,7 +25,7 @@ public class Bank extends Node {
 				if(Banking.isBankScreenOpen()){
 					
 					Banking.depositAllExcept(Miner.PICKAXES);
-					WebWalking.walkTo(Miner.StartTile);
+					WebWalking.walkTo(Miner.startTile);
 					
 				}
 				

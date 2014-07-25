@@ -25,21 +25,21 @@ public class Mine extends Node {
 	@Override
 	public void execute() {
 
-		if(PathFinding.distanceTo(Miner.StartTile, false) > 20){
+		if(PathFinding.distanceTo(Miner.startTile, false) > 20){
 			
-			WebWalking.walkTo(Miner.StartTile);
+			WebWalking.walkTo(Miner.startTile);
 			
 		}else{
 			
 			int use;
 			int hover;
-			RSObject[] ores = Objects.findNearest(50, Miner.SelectedOres);
+			RSObject[] ores = Objects.findNearest(50, Miner.selectedOres);
 			
 			if(ores != null && ores.length > 0){
 				
-				if(Miner.AntiBan.BOOL_TRACKER.USE_CLOSEST.next() || ores.length > 2){
+				if(Miner.antiBan.BOOL_TRACKER.USE_CLOSEST.next() || ores.length > 2){
 					
-					Miner.AntiBan.BOOL_TRACKER.USE_CLOSEST.reset();
+					Miner.antiBan.BOOL_TRACKER.USE_CLOSEST.reset();
 					use = 0;
 					hover = 1;
 					
@@ -52,12 +52,12 @@ public class Mine extends Node {
 				
 				if(ores.length > use && ores[use] != null){
 					
-					General.sleep(Miner.AntiBan.DELAY_TRACKER.NEW_OBJECT.next());
-					Miner.AntiBan.DELAY_TRACKER.NEW_OBJECT.reset();
+					General.sleep(Miner.antiBan.DELAY_TRACKER.NEW_OBJECT.next());
+					Miner.antiBan.DELAY_TRACKER.NEW_OBJECT.reset();
 					
 					if(Miner.miner.containsID(ores[use].getDefinition().getID())&& vaildOre(ores[use]) && DynamicClicking.clickRSModel(ores[use].getModel(), 1)){
 						
-						Miner.CurrentlyMining = ores[use];
+						Miner.currentlyMining = ores[use];
 						
 						Timing.waitCondition(new Condition() {
 							
@@ -73,12 +73,12 @@ public class Mine extends Node {
 							}
 						}, 2000);
 						
-						if(ores[hover] != null && Miner.AntiBan.BOOL_TRACKER.HOVER_NEXT.next()){
+						if(ores[hover] != null && Miner.antiBan.BOOL_TRACKER.HOVER_NEXT.next()){
 							
-							Miner.AntiBan.BOOL_TRACKER.HOVER_NEXT.reset();
+							Miner.antiBan.BOOL_TRACKER.HOVER_NEXT.reset();
 							
 							Point p[] = ores[hover].getModel().getPoints();
-							Miner.MineNext = ores[hover];
+							Miner.mineNext = ores[hover];
 							
 							int pUse = General.random(0, p.length - 1);
 							

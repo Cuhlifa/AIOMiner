@@ -106,7 +106,7 @@ public class GUI {
 
 				if (chckbxAdvancedHud.isSelected()) {
 
-					Miner.AdvancedHUD = true;
+					Miner.advancedHUD = true;
 
 				}
 
@@ -251,7 +251,7 @@ public class GUI {
 
 						}
 
-						Miner.SelectedOres = Miner.miner.SetToArray(IDs);
+						Miner.selectedOres = Miner.miner.SetToArray(IDs);
 
 					}
 
@@ -280,7 +280,7 @@ public class GUI {
 
 					}
 
-					Miner.SelectedOres = Miner.miner.SetToArray(IDs);
+					Miner.selectedOres = Miner.miner.SetToArray(IDs);
 
 				}
 			});

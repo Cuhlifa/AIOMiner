@@ -12,31 +12,31 @@ public class AntiBan extends scripts.MinerPlusPlus.Node {
 	@Override
 	public void execute() {
 
-		Miner.AntiBan.performCombatCheck();
+		Miner.antiBan.performCombatCheck();
 
-		Miner.AntiBan.performEquipmentCheck();
+		Miner.antiBan.performEquipmentCheck();
 
-		Miner.AntiBan.performExamineObject();
+		Miner.antiBan.performExamineObject();
 
-		Miner.AntiBan.performFriendsCheck();
+		Miner.antiBan.performFriendsCheck();
 
-		Miner.AntiBan.performLeaveGame();
+		Miner.antiBan.performLeaveGame();
 
-		Miner.AntiBan.performMusicCheck();
+		Miner.antiBan.performMusicCheck();
 
-		Miner.AntiBan.performPickupMouse();
+		Miner.antiBan.performPickupMouse();
 
-		Miner.AntiBan.performQuestsCheck();
+		Miner.antiBan.performQuestsCheck();
 
-		Miner.AntiBan.performRandomMouseMovement();
+		Miner.antiBan.performRandomMouseMovement();
 
-		Miner.AntiBan.performRandomRightClick();
+		Miner.antiBan.performRandomRightClick();
 
-		Miner.AntiBan.performRotateCamera();
+		Miner.antiBan.performRotateCamera();
 
-		Miner.AntiBan.performTimedActions(SKILLS.MINING);
+		Miner.antiBan.performTimedActions(SKILLS.MINING);
 
-		Miner.AntiBan.performXPCheck(SKILLS.MINING);
+		Miner.antiBan.performXPCheck(SKILLS.MINING);
 
 	}
 

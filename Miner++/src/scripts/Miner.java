@@ -57,44 +57,44 @@ import scripts.Nodes.Mine;
 public class Miner extends Script implements Painting {
 
 	// Variables
-	public static ABCUtil AntiBan = new ABCUtil();
-	public static boolean GUI_ISCOMPLETE = false;
-	public static RSObject CurrentlyMining;
-	public static RSObject MineNext;
-	public static int[] SelectedOres;
+	public static ABCUtil antiBan = new ABCUtil();
+	public static boolean guiIsComplete = false;
+	public static RSObject currentlyMining;
+	public static RSObject mineNext;
+	public static int[] selectedOres;
 	public static Set<Integer> SelectedOresSet = new HashSet<>();
-	public static int StartingLevel;
-	public static int StartingXP;
-	public static long StartTime;
-	public static int MinedOres = 0;
-	public static RSTile StartTile;
+	public static int startingLevel;
+	public static int startingXP;
+	public static long startTime;
+	public static int minedOres = 0;
+	public static RSTile startTile;
 	public static GUI gui;
-	public static boolean AdvancedHUD = false;
-	public static boolean HighlightPath = false;
-	public static boolean HighlightModel = false;
-	public static boolean DrawHUD = false;
+	public static boolean advancedHUD = false;
+	public static boolean highlightPath = false;
+	public static boolean highlightModel = false;
+	public static boolean drawHUD = false;
 	public static MiningMethod method = MiningMethod.BANKING;
 	public static ScriptState state = ScriptState.IDLE;
 	public static final String[] PICKAXES = {"Bronze pickaxe","Iron pickaxe","Steel pickaxe","Mithril pickaxe","Adamant pickaxe","Rune pickaxe","Dragon pickaxe"};
 	public static final String[] PICKAXE_HEADS = {"Bronze pick head","Iron pick head","Steel pick head","Mithril pick head","Adamant pick head","Rune pick head","Dragon pick head"};
-	public static final int PICKAXE_HANDLE = 466;
+	public static final String PICKAXE_HANDLE = "Pickaxe handle";
 	public static final int[] ANIMATIONS = { 624, 625, 628 };
 	public static Image HUD;
-	public static int InventoryCount;
-	public static boolean SelectMode = false;
-	public static long PathPaintTimeout = 0;
-	public static RSTile[] WalkPath;
-	public static String[] OreNames = { "Tin ore", "Copper ore", "Silver ore",
+	public static int inventoryCount;
+	public static boolean selectMode = false;
+	public static long pathPaintTimeout = 0;
+	public static RSTile[] walkPath;
+	public static String[] oreNames = { "Tin ore", "Copper ore", "Silver ore",
 			"Runite ore", "Iron ore", "Coal", "Gold ore", "Mithril ore",
 			"Adamantite ore" };
-	public static ArrayList<Node> Nodes = new ArrayList<Node>();
+	public static ArrayList<Node> nodes = new ArrayList<Node>();
 	public static Miner miner;
 	
 	public boolean containsID(int Id) {
 
-		if (SelectedOres != null && SelectedOres.length > 0) {
+		if (selectedOres != null && selectedOres.length > 0) {
 
-			for (int i : SelectedOres) {
+			for (int i : selectedOres) {
 
 				if (i == Id) {
 					return true;
@@ -148,10 +148,10 @@ public class Miner extends Script implements Painting {
 		Mouse.setSpeed(General.random(110, 140));
 
 		int CurrentXP = Skills.getXP(SKILLS.MINING);
-		int GainedXP = CurrentXP - StartingXP;
+		int GainedXP = CurrentXP - startingXP;
 		int CurrentLevel = Skills.getActualLevel(SKILLS.MINING);
-		int GainedLevel = CurrentLevel - StartingLevel;
-		long RunTime = (System.currentTimeMillis() - StartTime) / 1000;
+		int GainedLevel = CurrentLevel - startingLevel;
+		long RunTime = (System.currentTimeMillis() - startTime) / 1000;
 		long hours = TimeUnit.SECONDS.toHours(RunTime);
 		long minutes = TimeUnit.SECONDS.toMinutes(RunTime
 				- TimeUnit.HOURS.toSeconds(hours));
@@ -160,8 +160,8 @@ public class Miner extends Script implements Painting {
 						.toSeconds(minutes));
 		int MinedOresHour = 0;
 		int GainedXPHour = 0;
-		if (MinedOres > 0) {
-			MinedOresHour = (int) ((MinedOres * 3600) / RunTime);
+		if (minedOres > 0) {
+			MinedOresHour = (int) ((minedOres * 3600) / RunTime);
 		}
 		if (GainedXP > 0) {
 			GainedXPHour = (int) ((GainedXP * 3600) / RunTime);
@@ -171,7 +171,7 @@ public class Miner extends Script implements Painting {
 
 			Graphics2D g2d = (Graphics2D) g;
 
-			if (!GUI_ISCOMPLETE) {
+			if (!guiIsComplete) {
 
 				RSObject[] Objs = Objects.getAll(30);
 
@@ -212,9 +212,9 @@ public class Miner extends Script implements Painting {
 
 			}
 
-			if (SelectedOres != null && SelectedOres.length > 0) {
+			if (selectedOres != null && selectedOres.length > 0) {
 
-				RSObject[] Objs = Objects.find(30, SelectedOres);
+				RSObject[] Objs = Objects.find(30, selectedOres);
 
 				for (RSObject Obj : Objs) {
 
@@ -229,9 +229,9 @@ public class Miner extends Script implements Painting {
 
 			}
 
-			if (CurrentlyMining != null && HighlightModel) {
+			if (currentlyMining != null && highlightModel) {
 
-				for (Polygon p : CurrentlyMining.getModel().getTriangles()) {
+				for (Polygon p : currentlyMining.getModel().getTriangles()) {
 
 					g2d.setColor(Color.GREEN);
 					g2d.draw(p);
@@ -240,10 +240,10 @@ public class Miner extends Script implements Painting {
 
 			}
 
-			if (MineNext != null && HighlightModel
+			if (mineNext != null && highlightModel
 					&& state == ScriptState.MINING) {
 
-				for (Polygon p : MineNext.getModel().getTriangles()) {
+				for (Polygon p : mineNext.getModel().getTriangles()) {
 
 					g2d.setColor(Color.BLUE);
 					g2d.draw(p);
@@ -263,7 +263,7 @@ public class Miner extends Script implements Painting {
 			g.setFont(new Font("Verdana", Font.BOLD, 12));
 			g.drawString("" + GainedXP + " (" + GainedXPHour + ")", 91, 402);
 			g.drawString("" + "N/A", 91, 439);
-			g.drawString("" + MinedOres + " (" + MinedOresHour + ")", 240, 402);
+			g.drawString("" + minedOres + " (" + MinedOresHour + ")", 240, 402);
 			g.drawString("" + hours + "H " + minutes + "M " + seconds + "S",
 					370, 402);
 			g.drawString("" + GainedLevel + " (" + CurrentLevel + ")", 240, 439);
@@ -287,19 +287,19 @@ public class Miner extends Script implements Painting {
 			General.useAntiBanCompliance(true);
 			gui = new GUI();
 			gui.frmMiner.setVisible(true);
-			StartTile = Player.getPosition();
-			StartingLevel = SKILLS.MINING.getActualLevel();
-			StartingXP = Skills.getXP(SKILLS.MINING);
-			StartTime = System.currentTimeMillis();
+			startTile = Player.getPosition();
+			startingLevel = SKILLS.MINING.getActualLevel();
+			startingXP = Skills.getXP(SKILLS.MINING);
+			startTime = System.currentTimeMillis();
 			try {
 				HUD = ImageIO.read(new URL("http://i.imgur.com/EWhEBTU.png"));
 			} catch (Exception e) {
 			}
-			InventoryCount = Inventory.getCount(OreNames);
-			Nodes.add(new Bank());
-			Nodes.add(new scripts.Nodes.AntiBan());
-			Nodes.add(new Drop());
-			Nodes.add(new Mine());
+			inventoryCount = Inventory.getCount(oreNames);
+			nodes.add(new Bank());
+			nodes.add(new scripts.Nodes.AntiBan());
+			nodes.add(new Drop());
+			nodes.add(new Mine());
 			Start();
 			
 		}
@@ -356,21 +356,21 @@ public class Miner extends Script implements Painting {
 
 		while (true) {
 
-			if (GUI_ISCOMPLETE && Login.getLoginState() == STATE.INGAME) {
+			if (guiIsComplete && Login.getLoginState() == STATE.INGAME) {
 
 				System.out.println("Checking Node");
 				
-				for(Node n : Nodes){
+				for(Node n : nodes){
 					System.out.println("Checking " + n.getName());
 					if(n.validate()){n.execute(); System.out.println("Excuting " + n.getName());}
 					
 				}
 				
-				int InvCount = Inventory.getCount(OreNames);
-				if (InvCount > InventoryCount) {
+				int InvCount = Inventory.getCount(oreNames);
+				if (InvCount > inventoryCount) {
 
-					MinedOres += InvCount - InventoryCount;
-					InventoryCount = InvCount;
+					minedOres += InvCount - inventoryCount;
+					inventoryCount = InvCount;
 
 				}
 
